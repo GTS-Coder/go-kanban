@@ -13,6 +13,6 @@ func KanbanRoutes(incomingRoutes *gin.Engine) {
 				"message": "pong",
 			})
 		})
-	incomingRoutes.GET("/boards/:board_id", controller.GetKanbanBoard())
+	incomingRoutes.GET("api/kanban/boards/:board_id", controller.GetKanbanBoard())
 	// incomingRoutes.POST("/boards/:board_id", controller.CreateKanbanBoard())
 }
