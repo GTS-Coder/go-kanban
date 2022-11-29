@@ -16,3 +16,8 @@ func KanbanRoutes(incomingRoutes *gin.Engine) {
 	incomingRoutes.GET("api/kanban/board/", controller.GetKanbanBoard())
 	// incomingRoutes.POST("/boards/:board_id", controller.CreateKanbanBoard())
 }
+
+func UserRoutes(incomingRoutes *gin.Engine) {
+	incomingRoutes.POST("/api/account/signup", controller.SignUp())
+	incomingRoutes.POST("/api/account/login", controller.Login())
+}

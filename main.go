@@ -17,6 +17,7 @@ func main() {
 	router.Use(gin.Logger()) //loggin request
 
 	routes.KanbanRoutes(router) //use routes
+	routes.UserRoutes(router)   //use routes
 	if Port == "" {
 		Port = "8080"
 	}
