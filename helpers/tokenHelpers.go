@@ -29,7 +29,7 @@ func GenerateAllTokens(uid string) (signedToken string, signedRefreshToken strin
 	claims := &SignedDetails{ //create claims for token with user_id and token expiration time
 		User_id: uid,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Local().Add(time.Second * 20).Unix(), //token expires in 24 hours
+			ExpiresAt: time.Now().Local().Add(time.Hour * 2).Unix(), //token expires in 24 hours
 		},
 	}
 

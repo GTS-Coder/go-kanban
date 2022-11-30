@@ -72,14 +72,14 @@ func SignUp() gin.HandlerFunc {
 		user.Created_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 		user.ID = primitive.NewObjectID()
 		user.User_id = user.ID.Hex()
-		token, refreshToken, err := helpers.GenerateAllTokens(user.User_id)
+		acessToken, refreshToken, err := helpers.GenerateAllTokens(user.User_id)
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error when generate token": err.Error()})
 			return
 		}
 
-		user.Token = &token
+		user.Token = &acessToken
 		user.Refresh_token = &refreshToken
 
 		_, insertErr := userCollection.InsertOne(ctx, user)
