@@ -120,8 +120,8 @@ func Login() gin.HandlerFunc {
 			return
 		}
 
-		//token, refreshToken, _ := helpers.GenerateAllTokens(foundUser.User_id)
-		//helpers.UpdateAllTokens(token, refreshToken, foundUser.User_id)
+		token, refreshToken, _ := helpers.GenerateAllTokens(foundUser.User_id)
+		helpers.UpdateAllTokens(token, refreshToken, foundUser.User_id)
 
 		c.JSON(http.StatusOK, foundUser) // send json to client
 	}
