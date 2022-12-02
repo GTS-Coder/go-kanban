@@ -52,7 +52,7 @@ func GetKanbanBoard() gin.HandlerFunc {
 
 		var err error
 		// id_owner := c.Param("board_id")
-		id_owner := "6382d97b4de71616c9412b21"
+		id_owner := "6387347ca92496eddbc3a110"
 
 		err = kanbanCollection.FindOne(ctx, bson.M{"id_owner": id_owner}).Decode(&board)
 		if err != nil {
