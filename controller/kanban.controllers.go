@@ -54,7 +54,7 @@ func GetKanbanBoard() gin.HandlerFunc {
 		// id_owner := c.Param("board_id")
 		id_owner := "6387347ca92496eddbc3a110"
 
-		err = kanbanCollection.FindOne(ctx, bson.M{"id_owner": id_owner}).Decode(&board)
+		err = kanbanCollection.FindOne(ctx, bson.M{"id_kanban": id_owner}).Decode(&board)
 		if err != nil {
 			defer cancel()
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
