@@ -9,7 +9,7 @@ import (
 type User struct {
 	ID            primitive.ObjectID `json:"id"`
 	Name          *string            `json:"displayName" validate:"required,min=2,max=10"`
-	Email         *string            `json:"email" validate:"required,email"`
+	Email         *string            `json:"email" validate:"required,email" bson:"email"`
 	Password      *string            `json:"password"`
 	Token         *string            `json:"accessToken"`
 	Refresh_token *string            `json:"refresh_token"`
@@ -18,4 +18,5 @@ type User struct {
 	User_id       string             `json:"user_id"` //related SQL
 	Role          string             `json:"role"`
 	PhotoUrl      string             `json:"photoUrl"`
+	IdGetKanban   string             `json:"idGetKanban"`
 }
