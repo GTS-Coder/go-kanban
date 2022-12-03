@@ -11,7 +11,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 //SignedDetails
@@ -93,22 +92,19 @@ func UpdateAllTokens(signedToken string, signedRefreshToken string, userId strin
 
 	var updatedObj primitive.D //create a primitive.D object to update the token and refresh token in database
 
-	updatedObj = append(updatedObj, primitive.E{Key: "token", Value: signedToken})
+	updatedObj = append(updatedObj, primitive.E{Key: "accessToken", Value: signedToken})
 	updatedObj = append(updatedObj, primitive.E{Key: "refreshToken", Value: signedRefreshToken})
 
 	Updated_at, _ := time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 	updatedObj = append(updatedObj, primitive.E{Key: "updated_at", Value: Updated_at})
 
-	upsert := true //if user does not exist then create new user
+	id_kanban := "6382d97b4de71616c9412b21"
 
-	id_owner := "6382d97b4de71616c9412b21"
+	//filter to find the user with user_id
+	filter := bson.D{primitive.E{Key: "id_kanban", Value: id_kanban}}
+	update := bson.D{primitive.E{Key: "$set", Value: updatedObj}}
 
-	filter := bson.M{"id_owner": id_owner} //filter to find the user with user_id
-	opt := options.UpdateOptions{
-		Upsert: &upsert,
-	}
-
-	_, err := userCollection.UpdateOne(ctx, filter, bson.D{{"$set", updatedObj}}, &opt) //update token and refresh token in database and return error if any error occurs
+	_, err := userCollection.UpdateOne(ctx, filter, update) //update token and refresh token in database and return error if any error occurs
 
 	defer cancel()
 

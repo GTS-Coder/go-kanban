@@ -21,5 +21,5 @@ func KanbanRoutes(incomingRoutes *gin.Engine) {
 func UserRoutes(incomingRoutes *gin.Engine) {
 	incomingRoutes.POST("/api/account/signup", controller.SignUp())
 	incomingRoutes.POST("/api/account/login", controller.Login())
-	incomingRoutes.GET("api/account/myboard", controller.GetKanbanWhenUserLogin())
+	// incomingRoutes.GET("api/account/myboard", controller.GetKanbanWhenUserLogin())
 }

@@ -44,7 +44,7 @@ func ConnectDB() *mongo.Client {
 	err = client.Ping(ctx, nil)
 
 	if err != nil {
-		log.Fatal("Err pins to MongoDb")
+		log.Fatal("Err ping to MongoDb")
 	}
 
 	fmt.Println("Connected MongoDb")
