@@ -90,7 +90,7 @@ func UpdateKanbanColumns() gin.HandlerFunc {
 		}
 
 		defer cancel()
-		defer c.JSON(http.StatusOK, gin.H{"message": "Cloumns updated successfully"})
+		defer c.JSON(http.StatusOK, gin.H{"message": "Columns updated successfully"})
 	}
 }
 
@@ -117,6 +117,6 @@ func UpdateKanbanColumnOrder() gin.HandlerFunc {
 		}
 
 		defer cancel()
-		defer c.JSON(http.StatusOK, gin.H{"message": "CloumnOrder updated successfully"})
+		defer c.JSON(http.StatusOK, gin.H{"message": "ColumnOrder updated successfully"})
 	}
 }

@@ -4,17 +4,6 @@ import (
 	"time"
 )
 
-// 👈 KanbanUpdateBoard is used to update board from database
-
-type KanbanUpdateBoard struct {
-	Columns []struct {
-		ID      string   `json:"id" bson:"id"`
-		Name    string   `json:"name" bson:"name"`
-		CardIds []string `json:"cardIds" bson:"cardIds"`
-	} `json:"columns" bson:"columns"`
-	ColumnOrder []string `json:"columnOrder" bson:"columnOrder"`
-}
-
 // 👈 Cloumn is used to sent data to update board-colums from database
 
 type CloumnUpdate struct {
