@@ -79,6 +79,8 @@ func UpdateKanbanColumns() gin.HandlerFunc {
 			return
 		}
 
+		fmt.Println("columns", ClientUpdateBoard.Columns)
+
 		_, err := kanbanCollection.UpdateOne(ctx, bson.M{"id_kanban": "6387347ca92496eddbc3a110"}, bson.M{"$set": bson.M{"board.columns": ClientUpdateBoard.Columns}})
 
 		if err != nil {
@@ -104,7 +106,7 @@ func UpdateKanbanColumnOrder() gin.HandlerFunc {
 			return
 		}
 
-		fmt.Println(ClientUpdateBoard.ColumnOrder)
+		fmt.Println("columnOrder", ClientUpdateBoard.ColumnOrder)
 
 		_, err := kanbanCollection.UpdateOne(ctx, bson.M{"id_kanban": "6387347ca92496eddbc3a110"}, bson.M{"$set": bson.M{"board.columnOrder": ClientUpdateBoard.ColumnOrder}})
 
