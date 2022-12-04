@@ -14,7 +14,8 @@ func KanbanRoutes(incomingRoutes *gin.Engine) {
 			})
 		})
 	incomingRoutes.GET("api/kanban/board/", controller.GetKanbanBoard())
-
+	incomingRoutes.POST("api/kanban/board/update/colums", controller.UpdateKanbanColumns())
+	incomingRoutes.POST("api/kanban/board/update/colum-order", controller.UpdateKanbanColumnOrder())
 	// incomingRoutes.POST("/boards/:board_id", controller.CreateKanbanBoard())
 }
 

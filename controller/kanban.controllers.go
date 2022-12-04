@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"fmt"
 	configs "my-kanban/config"
 	"my-kanban/models"
 	"net/http"
@@ -63,5 +64,57 @@ func GetKanbanBoard() gin.HandlerFunc {
 
 		defer cancel()
 		defer c.JSON(http.StatusOK, board)
+	}
+}
+
+func UpdateKanbanColumns() gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+		ClientUpdateBoard := models.CloumnUpdate{}
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second) //set timeout for request to database
+
+		if err := c.BindJSON(&ClientUpdateBoard); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error_json": err.Error()})
+			defer cancel()
+			return
+		}
+
+		_, err := kanbanCollection.UpdateOne(ctx, bson.M{"id_kanban": "6387347ca92496eddbc3a110"}, bson.M{"$set": bson.M{"board.columns": ClientUpdateBoard.Columns}})
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			defer cancel()
+			return
+		}
+
+		defer cancel()
+		defer c.JSON(http.StatusOK, gin.H{"message": "Cloumns updated successfully"})
+	}
+}
+
+func UpdateKanbanColumnOrder() gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+		ClientUpdateBoard := models.ColumnOrderUpdate{}
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second) //set timeout for request to database
+
+		if err := c.BindJSON(&ClientUpdateBoard); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error_json": err.Error()})
+			defer cancel()
+			return
+		}
+
+		fmt.Println(ClientUpdateBoard.ColumnOrder)
+
+		_, err := kanbanCollection.UpdateOne(ctx, bson.M{"id_kanban": "6387347ca92496eddbc3a110"}, bson.M{"$set": bson.M{"board.columnOrder": ClientUpdateBoard.ColumnOrder}})
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			defer cancel()
+			return
+		}
+
+		defer cancel()
+		defer c.JSON(http.StatusOK, gin.H{"message": "CloumnOrder updated successfully"})
 	}
 }
