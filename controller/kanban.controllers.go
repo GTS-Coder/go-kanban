@@ -73,13 +73,15 @@ func UpdateKanbanColumns() gin.HandlerFunc {
 		ClientUpdateBoard := models.CloumnUpdate{}
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second) //set timeout for request to database
 
-		if err := c.BindJSON(&ClientUpdateBoard); err != nil {
+		// //print json get from client
+		// body, _ := ioutil.ReadAll(c.Request.Body)
+		// println(string(body))
+
+		if err := c.ShouldBindJSON(&ClientUpdateBoard); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error_json": err.Error()})
 			defer cancel()
 			return
 		}
-
-		fmt.Println("columns", ClientUpdateBoard.Columns)
 
 		_, err := kanbanCollection.UpdateOne(ctx, bson.M{"id_kanban": "6387347ca92496eddbc3a110"}, bson.M{"$set": bson.M{"board.columns": ClientUpdateBoard.Columns}})
 
