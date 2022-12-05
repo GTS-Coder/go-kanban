@@ -73,15 +73,13 @@ func UpdateKanbanColumns() gin.HandlerFunc {
 		ClientUpdateBoard := models.CloumnUpdate{}
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second) //set timeout for request to database
 
-		// //print json get from client
-		// body, _ := ioutil.ReadAll(c.Request.Body)
-		// println(string(body))
-
 		if err := c.ShouldBindJSON(&ClientUpdateBoard); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error_json": err.Error()})
 			defer cancel()
 			return
 		}
+
+		fmt.Println("columnOrder", ClientUpdateBoard)
 
 		_, err := kanbanCollection.UpdateOne(ctx, bson.M{"id_kanban": "6387347ca92496eddbc3a110"}, bson.M{"$set": bson.M{"board.columns": ClientUpdateBoard.Columns}})
 
@@ -120,5 +118,36 @@ func UpdateKanbanColumnOrder() gin.HandlerFunc {
 
 		defer cancel()
 		defer c.JSON(http.StatusOK, gin.H{"message": "ColumnOrder updated successfully"})
+	}
+}
+
+func RenameColumnsKanban() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ClientUpdate := models.ColumnRename{}
+
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second) //set timeout for request to database
+
+		if err := c.BindJSON(&ClientUpdate); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error_json": err.Error()})
+			defer cancel()
+			return
+		}
+
+		fmt.Println("columnOrder", ClientUpdate.ColumnID)
+
+		fitler := bson.M{"board.columns.id": ClientUpdate.ColumnID, "id_kanban": "6387347ca92496eddbc3a110"}
+
+		// err := kanbanCollection.FindOne(ctx, fitler).Decode(&ClientGet)
+
+		_, err := kanbanCollection.UpdateOne(ctx, fitler, bson.M{"$set": bson.M{"board.columns.$.name": ClientUpdate.NewName}})
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			defer cancel()
+			return
+		}
+
+		defer cancel()
+		defer c.JSON(http.StatusOK, gin.H{"message": "Column renamed successfully"})
 	}
 }

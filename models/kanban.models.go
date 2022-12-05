@@ -20,6 +20,12 @@ type ColumnOrderUpdate struct {
 	ColumnOrder []string `json:"columnOrder" bson:"columnOrder"`
 }
 
+// 👈 Board is used to sent data to rename columns board from database
+type ColumnRename struct {
+	ColumnID string `json:"id" bson:"id" binding:"required"`
+	NewName  string `json:"name" bson:"name" binding:"required"`
+}
+
 // 👈 DBResponse is used to sent data to database
 
 type KanbanInput struct {
