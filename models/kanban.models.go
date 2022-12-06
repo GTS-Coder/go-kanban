@@ -36,6 +36,33 @@ type CloumnResponse struct {
 	} `json:"columns" bson:"columns"`
 }
 
+// 👈 Kanban is used to sent data to add card from database
+
+type AddCardInput struct {
+	Card struct {
+		ID          string `json:"id"`
+		Name        string `json:"name"`
+		Description string `json:"description"`
+		Assignee    []struct {
+			ID     string `json:"id"`
+			Avatar string `json:"avatar"`
+			Name   string `json:"name"`
+		} `json:"assignee"`
+		Due         []int64       `json:"due"`
+		Attachments []interface{} `json:"attachments"`
+		Comments    []struct {
+			ID          string    `json:"id"`
+			Avatar      string    `json:"avatar"`
+			Name        string    `json:"name"`
+			CreatedAt   time.Time `json:"createdAt"`
+			MessageType string    `json:"messageType"`
+			Message     string    `json:"message"`
+		} `json:"comments"`
+		Completed bool `json:"completed"`
+	} `json:"card"`
+	ColumnID string `json:"columnId" bson:"columnId" binding:"required"`
+}
+
 // 👈 DBResponse is used to sent data to database
 
 type KanbanInput struct {
