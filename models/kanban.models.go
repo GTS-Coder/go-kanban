@@ -26,6 +26,16 @@ type ColumnRename struct {
 	NewName  string `json:"name" bson:"name" binding:"required"`
 }
 
+// 👈 Kanban is used to sent data to database
+
+type CloumnResponse struct {
+	Columns struct {
+		ID      string   `json:"id" bson:"id"`
+		Name    string   `json:"name" bson:"name"`
+		CardIds []string `json:"cardIds" bson:"cardIds"`
+	} `json:"columns" bson:"columns"`
+}
+
 // 👈 DBResponse is used to sent data to database
 
 type KanbanInput struct {

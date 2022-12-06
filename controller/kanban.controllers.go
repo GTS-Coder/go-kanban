@@ -147,7 +147,41 @@ func RenameColumnsKanban() gin.HandlerFunc {
 			return
 		}
 
+		ClientGetResponse := models.CloumnResponse{}
+
+		// err = kanbanCollection.FindOne(ctx, fitler).Decode(&ClientGetResponse)
+
+		//aggregate to get the column with the new name
+		pipeline := bson.A{
+			bson.M{"$match": bson.M{"board.columns.id": ClientUpdate.ColumnID}},
+			bson.M{"$project": bson.M{"board.columns": bson.M{"$filter": bson.M{"input": "$board.columns", "as": "column", "cond": bson.M{"$eq": bson.A{"$$column.id", ClientUpdate.ColumnID}}}}}},
+		}
+
+		//referent document aggregation:https://www.mongodb.com/docs/manual/reference/operator/aggregation/
+
+		result, err := kanbanCollection.Aggregate(ctx, pipeline)
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			defer cancel()
+			return
+		}
+
+		var results []bson.M
+
+		if err = result.All(ctx, &results); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			defer cancel()
+			return
+		}
+
+		fmt.Println("results", ClientGetResponse)
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		}
+
 		defer cancel()
-		defer c.JSON(http.StatusOK, gin.H{"message": "Column renamed successfully"})
+		defer c.JSON(http.StatusOK, results)
 	}
 }
