@@ -25,7 +25,7 @@ func UpdateKanbanColumns() gin.HandlerFunc {
 
 		fmt.Println("columnOrder", ClientUpdateBoard)
 
-		_, err := kanbanCollection.UpdateOne(ctx, bson.M{"id_kanban": "6387347ca92496eddbc3a110"}, bson.M{"$set": bson.M{"board.columns": ClientUpdateBoard.Columns}})
+		_, err := kanbanCollection.UpdateOne(ctx, bson.M{"id_kanban": "639150414de71616c9b38134"}, bson.M{"$set": bson.M{"board.columns": ClientUpdateBoard.Columns}})
 
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -52,7 +52,7 @@ func UpdateKanbanColumnOrder() gin.HandlerFunc {
 
 		fmt.Println("columnOrder", ClientUpdateBoard.ColumnOrder)
 
-		_, err := kanbanCollection.UpdateOne(ctx, bson.M{"id_kanban": "6387347ca92496eddbc3a110"}, bson.M{"$set": bson.M{"board.columnOrder": ClientUpdateBoard.ColumnOrder}})
+		_, err := kanbanCollection.UpdateOne(ctx, bson.M{"id_kanban": "639150414de71616c9b38134"}, bson.M{"$set": bson.M{"board.columnOrder": ClientUpdateBoard.ColumnOrder}})
 
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -79,7 +79,7 @@ func RenameColumnsKanban() gin.HandlerFunc {
 
 		fmt.Println("columnOrder", ClientUpdate.ColumnID)
 
-		fitler := bson.M{"board.columns.id": ClientUpdate.ColumnID, "id_kanban": "6387347ca92496eddbc3a110"}
+		fitler := bson.M{"board.columns.id": ClientUpdate.ColumnID, "id_kanban": "639150414de71616c9b38134"}
 
 		// err := kanbanCollection.FindOne(ctx, fitler).Decode(&ClientGet)
 

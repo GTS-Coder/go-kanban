@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -52,9 +53,10 @@ func GetKanbanBoard() gin.HandlerFunc {
 
 		var err error
 		// id_owner := c.Param("board_id")
-		id_owner := "6387347ca92496eddbc3a110"
+		//id_owner to object id
+		id_owner, _ := primitive.ObjectIDFromHex("639150414de71616c9b38134")
 
-		err = kanbanCollection.FindOne(ctx, bson.M{"id_kanban": id_owner}).Decode(&board)
+		err = kanbanCollection.FindOne(ctx, bson.M{"_id": id_owner}).Decode(&board)
 		if err != nil {
 			defer cancel()
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
