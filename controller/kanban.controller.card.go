@@ -83,3 +83,54 @@ func MarkDoneTask() gin.HandlerFunc {
 		defer c.JSON(http.StatusOK, gin.H{"message": "Update task success"})
 	}
 }
+
+func DeleteTask() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
+		ClientDeleteTask := models.DeleteCardInput{}
+		Card := models.AddCardInput{}
+		Columns := models.CloumnResponse{}
+
+		if err := c.ShouldBindJSON(&ClientDeleteTask); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error_json": err.Error()})
+			defer cancel()
+			return
+		}
+
+		deleteCard := bson.M{
+			"$pull": bson.M{
+				"board.cards": ClientDeleteTask.Cards,
+			},
+		}
+
+		deleteCardInColumns := bson.M{
+			"$pull": bson.M{
+				"board.columns.$.cardIds": bson.M{"$in": []string{ClientDeleteTask.Cards.ID}},
+			},
+		}
+
+		err := kanbanCollection.FindOneAndUpdate(context.Background(), bson.M{"board.cards.id": ClientDeleteTask.Cards.ID}, deleteCard).Decode(&Card)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error_find_card": err.Error(),
+				"data":            ClientDeleteTask,
+			})
+			defer cancel()
+			return
+		}
+		err = kanbanCollection.FindOneAndUpdate(context.Background(), bson.M{"board.columns.id": ClientDeleteTask.ColumnID}, deleteCardInColumns).Decode(&Columns)
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error_find_column": err.Error(),
+				"data":              ClientDeleteTask,
+			})
+			defer cancel()
+			return
+		}
+
+		defer cancel()
+		defer c.JSON(http.StatusOK, gin.H{"message": "Delete task success"})
+	}
+}

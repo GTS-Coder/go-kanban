@@ -19,7 +19,7 @@ func KanbanRoutes(incomingRoutes *gin.Engine) {
 	incomingRoutes.POST("api/kanban/board/update/column/name", controller.RenameColumnsKanban())
 	incomingRoutes.POST("api/kanban/board/update/card/new", controller.AddTask())
 	incomingRoutes.POST("api/kanban/board/update/card/done", controller.MarkDoneTask())
-
+	incomingRoutes.POST("api/kanban/board/update/card/delete", controller.DeleteTask())
 	// incomingRoutes.POST("/boards/:board_id", controller.CreateKanbanBoard())
 }
 

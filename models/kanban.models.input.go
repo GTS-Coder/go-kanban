@@ -101,3 +101,29 @@ type MarkDoneInput struct {
 	CardID    string `json:"id" bson:"id" binding:"required"`
 	Completed bool   `json:"completed" bson:"completed"`
 }
+
+// 👈  Kanban is used to sent data to database markdone task
+type DeleteCardInput struct {
+	Cards struct {
+		ID          string `json:"id" bson:"id" binding:"required"`
+		Name        string `json:"name" bson:"name"`
+		Description string `json:"description" bson:"description"`
+		Assignee    []struct {
+			ID     string `json:"id" bson:"id"`
+			Avatar string `json:"avatar" bson:"avatar"`
+			Name   string `json:"name" bson:"name"`
+		} `json:"assignee" bson:"assignee"`
+		Due         []int64       `json:"due" bson:"due"`
+		Attachments []interface{} `json:"attachments" bson:"attachments"`
+		Comments    []struct {
+			ID          string    `json:"id" bson:"id"`
+			Avatar      string    `json:"avatar" bson:"avatar"`
+			Name        string    `json:"name" bson:"name"`
+			CreatedAt   time.Time `json:"createdAt" bson:"createdAt"`
+			MessageType string    `json:"messageType" bson:"messageType"`
+			Message     string    `json:"message" bson:"message"`
+		} `json:"comments" bson:"comments"`
+		Completed bool `json:"completed" bson:"completed"`
+	} `json:"card" bson:"card"`
+	ColumnID string `json:"columnId" bson:"columnId"`
+}
