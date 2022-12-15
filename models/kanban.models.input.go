@@ -127,3 +127,19 @@ type DeleteCardInput struct {
 	} `json:"card" bson:"card"`
 	ColumnID string `json:"columnId" bson:"columnId"`
 }
+
+// 👈 Kanban is used to create new columns and sent data to database
+
+type AddNewColumnInput struct {
+	Column struct {
+		ID      string   `json:"id" bson:"id"`
+		Name    string   `json:"name" bson:"name"`
+		CardIds []string `json:"cardIds" bson:"cardIds"`
+	} `json:"column" bson:"column"`
+}
+
+type DeleteColumnInput struct {
+	Column struct {
+		ID string `json:"id" bson:"id"`
+	} `json:"column" bson:"column"`
+}

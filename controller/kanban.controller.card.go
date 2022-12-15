@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"fmt"
+	configs "my-kanban/config"
 	"my-kanban/models"
 	"net/http"
 	"time"
@@ -132,5 +133,75 @@ func DeleteTask() gin.HandlerFunc {
 
 		defer cancel()
 		defer c.JSON(http.StatusOK, gin.H{"message": "Delete task success"})
+	}
+}
+
+func AddNewColumn() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
+		ClientAddNewColumns := models.AddNewColumnInput{}
+		ClientGetBoard := models.DBResponse{}
+
+		if err := c.ShouldBindJSON(&ClientAddNewColumns); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error_json": err.Error()})
+			defer cancel()
+			return
+		}
+
+		update := bson.M{
+			"$push": bson.M{
+				"board.columns":     ClientAddNewColumns.Column,
+				"board.columnOrder": ClientAddNewColumns.Column.ID,
+			},
+		}
+		err := kanbanCollection.FindOneAndUpdate(context.Background(), bson.M{"id_kanban": configs.GetEnvName("ID_KANBAN")}, update).Decode(&ClientGetBoard)
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+				"data":  ClientAddNewColumns,
+			})
+			defer cancel()
+			return
+		}
+
+		defer cancel()
+		defer c.JSON(http.StatusOK, gin.H{"data": ClientAddNewColumns.Column, "message": "Add new column success"})
+	}
+}
+
+func DeleteColumn() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
+		ClientAddNewColumns := models.DeleteColumnInput{}
+		ClientGetBoard := models.DBResponse{}
+
+		if err := c.ShouldBindJSON(&ClientAddNewColumns); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error_json": err.Error()})
+			defer cancel()
+			return
+		}
+
+		update := bson.M{
+			"$pull": bson.M{
+				"board.columns":     ClientAddNewColumns.Column,
+				"board.columnOrder": ClientAddNewColumns.Column.ID,
+			},
+		}
+		err := kanbanCollection.FindOneAndUpdate(context.Background(), bson.M{"id_kanban": configs.GetEnvName("ID_KANBAN")}, update).Decode(&ClientGetBoard)
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+				"data":  ClientAddNewColumns,
+			})
+			defer cancel()
+			return
+		}
+
+		defer cancel()
+		defer c.JSON(http.StatusOK, gin.H{"data": ClientAddNewColumns.Column, "message": "Add new column success"})
 	}
 }
