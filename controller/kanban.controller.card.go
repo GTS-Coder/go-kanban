@@ -171,37 +171,55 @@ func AddNewColumn() gin.HandlerFunc {
 	}
 }
 
-func DeleteColumn() gin.HandlerFunc {
+func AddAttachments() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		var option = c.Param("option")
 		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 
-		ClientAddNewColumns := models.DeleteColumnInput{}
+		ClientAddAttachments := models.AddAttachmentInput{}
 		ClientGetBoard := models.DBResponse{}
 
-		if err := c.ShouldBindJSON(&ClientAddNewColumns); err != nil {
+		if err := c.ShouldBindJSON(&ClientAddAttachments); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error_json": err.Error()})
 			defer cancel()
 			return
 		}
 
-		update := bson.M{
-			"$pull": bson.M{
-				"board.columns":     ClientAddNewColumns.Column,
-				"board.columnOrder": ClientAddNewColumns.Column.ID,
-			},
+		var update bson.M
+
+		if option == "new" {
+
+			update = bson.M{
+				"$push": bson.M{
+					"board.cards.$.attachments": ClientAddAttachments.Data.URL,
+				},
+			}
+		} else if option == "delete" {
+			update = bson.M{
+				"$pull": bson.M{
+					"board.cards.$.attachments": ClientAddAttachments.Data.URL,
+				},
+			}
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "option not found",
+				"data":  ClientAddAttachments,
+			})
+			defer cancel()
+			return
 		}
-		err := kanbanCollection.FindOneAndUpdate(context.Background(), bson.M{"id_kanban": configs.GetEnvName("ID_KANBAN")}, update).Decode(&ClientGetBoard)
+		err := kanbanCollection.FindOneAndUpdate(context.Background(), bson.M{"board.cards.id": ClientAddAttachments.Data.ID}, update).Decode(&ClientGetBoard)
 
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
-				"data":  ClientAddNewColumns,
+				"data":  ClientAddAttachments,
 			})
 			defer cancel()
 			return
 		}
 
 		defer cancel()
-		defer c.JSON(http.StatusOK, gin.H{"data": ClientAddNewColumns.Column, "message": "Add new column success"})
+		defer c.JSON(http.StatusOK, gin.H{"data": ClientAddAttachments.Data, "message": "Add new attachments success"})
 	}
 }

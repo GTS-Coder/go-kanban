@@ -138,8 +138,17 @@ type AddNewColumnInput struct {
 	} `json:"column" bson:"column"`
 }
 
+// 👈 Kanban is used to Delete columns and sent data to database
 type DeleteColumnInput struct {
 	Column struct {
 		ID string `json:"id" bson:"id"`
 	} `json:"column" bson:"column"`
+}
+
+// 👈 Kanban is used to Delete columns and sent data to database
+type AddAttachmentInput struct {
+	Data struct {
+		ID  string `json:"id" bson:"id"`
+		URL string `json:"url" bson:"url"`
+	}
 }
