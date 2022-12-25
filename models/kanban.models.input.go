@@ -152,3 +152,29 @@ type AddAttachmentInput struct {
 		URL string `json:"url" bson:"url"`
 	}
 }
+
+// 👈 Kanban is used to rename card and sent data to database
+type RenameCard struct {
+	ID   string `json:"id" bson:"id"`
+	Name string `json:"name" bson:"name"`
+}
+
+// 👈 Kanban is used to change description card and sent data to database
+type ChangeDescriptionCard struct {
+	ID             string `json:"id" bson:"id"`
+	NewDescription string `json:"description" bson:"description"`
+}
+
+type NewComment struct {
+	ID          string `json:"id" bson:"id"`
+	Name        string `json:"name" bson:"name"`
+	Avatar      string `json:"avatar" bson:"avatar"`
+	CreatedAt   string `json:"createdAt" bson:"createdAt"`
+	MessageType string `json:"messageType" bson:"messageType"`
+	Message     string `repeats:"message" bson:"message"`
+}
+
+type AddNewComment struct {
+	CardID     string `json:"id" bson:"id"`
+	NewComment `json:"comment" bson:"comment"`
+}

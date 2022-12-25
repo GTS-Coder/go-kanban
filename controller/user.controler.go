@@ -70,6 +70,7 @@ func SignUp() gin.HandlerFunc {
 		password := HashPassword(user.Password)
 		user.Password = password
 		user.IdGetKanban = idGetKanban
+		user.Online = time.Now()
 
 		acessToken, refreshToken, err := helpers.GenerateAllTokens("6387347ca92496eddbc3a110")
 
@@ -89,7 +90,7 @@ func SignUp() gin.HandlerFunc {
 		}
 
 		defer cancel()
-		c.JSON(http.StatusOK, gin.H{"message": "success"})
+		c.JSON(http.StatusOK, gin.H{"user": user, "token": acessToken}) // send json to client})
 	}
 }
 
@@ -122,7 +123,7 @@ func Login() gin.HandlerFunc {
 		token, refreshToken, _ := helpers.GenerateAllTokens(" 6387347ca92496eddbc3a110")
 		helpers.UpdateAllTokens(token, refreshToken, "6387347ca92496eddbc3a110")
 
-		c.JSON(http.StatusOK, foundUser) // send json to client
+		c.JSON(http.StatusOK, gin.H{"user": foundUser, "token": token}) // send json to client
 	}
 }
 
@@ -161,3 +162,71 @@ func Login() gin.HandlerFunc {
 // 		defer c.JSON(http.StatusOK, board)
 // 	}
 // }
+
+func GetUserExist() gin.HandlerFunc {
+
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		var emailInput models.GetUSerInput
+
+		if err := c.BindJSON(&emailInput); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		var user models.DBResponse
+
+		err := userCollection.FindOne(ctx, bson.M{"email": emailInput.Email}).Decode(&user)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "User not found"})
+		}
+
+		c.JSON(http.StatusOK, gin.H{"user": user})
+	}
+}
+
+func GetAllUserContact() gin.HandlerFunc {
+
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		var users []models.UserElement
+
+		cursor, err := userCollection.Find(ctx, bson.D{}) // find all user
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "User not found"})
+		}
+		for cursor.Next(ctx) {
+			var user models.UserElement
+			err := cursor.Decode(&user)
+			if err != nil {
+				log.Fatal(err)
+			}
+			users = append(users, user)
+		}
+		if err := cursor.Err(); err != nil {
+			log.Fatal(err)
+		}
+		c.JSON(http.StatusOK, gin.H{"users": users})
+	}
+}
+
+func Refresh() gin.HandlerFunc {
+
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		var Clientemail models.Email
+
+		if err := c.BindJSON(&Clientemail); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		userCollection.FindOneAndUpdate(ctx, bson.M{"email": Clientemail.Email}, bson.M{"$set": bson.M{"online": time.Now()}})
+
+		c.JSON(201, gin.H{"message": "ok"})
+	}
+}

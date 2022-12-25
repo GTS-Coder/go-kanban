@@ -8,19 +8,32 @@ import (
 
 // 👈 SignUpInput struct
 type SignUpInput struct {
-	Name         string `json:"name" bson:"name" binding:"required"`
-	Email        string `json:"email" bson:"email" binding:"required"`
-	Password     string `json:"password" bson:"password" binding:"required,min=8"`
-	Role         string `json:"role" bson:"role"`
-	IdGetKanban  string `json:"id_getkanban" bson:"id_getkanban"`
-	AccessToken  string `json:"accessToken" bson:"accessToken"`
-	RefreshToken string `json:"refreshToken" bson:"refreshToken"`
+	Name         string    `json:"name" bson:"name" binding:"required"`
+	Email        string    `json:"email" bson:"email" binding:"required"`
+	Password     string    `json:"password" bson:"password" binding:"required,min=6"`
+	Role         string    `json:"role" bson:"role"`
+	IdGetKanban  string    `json:"id_getkanban" bson:"id_getkanban"`
+	AccessToken  string    `json:"accessToken" bson:"accessToken"`
+	RefreshToken string    `json:"refreshToken" bson:"refreshToken"`
+	Online       time.Time `json:"online" bson:"online"`
 }
 
 // 👈 SignInInput struct
 type SignInInput struct {
 	Email    string `json:"email" bson:"email" binding:"required"`
 	Password string `json:"password" bson:"password" binding:"required"`
+}
+
+// 👈 GetUSerInput struct using check user exist on server
+
+type GetUSerInput struct {
+	Email string `json:"email" bson:"email" binding:"required"`
+}
+
+type UserElement struct {
+	Name   string    `json:"name" bson:"name" binding:"required"`
+	Email  string    `json:"email" bson:"email" binding:"required"`
+	Online time.Time `json:"online" bson:"online"`
 }
 
 // 👈 DBResponse struct
@@ -35,4 +48,10 @@ type DBResponse struct {
 	IdGetKanban  string             `json:"id_getkanban" bson:"id_getkanban"`
 	AccessToken  string             `json:"accessToken" bson:"accessToken"`
 	RefreshToken string             `json:"refreshToken" bson:"refreshToken"`
+}
+
+// 👈 Email struct
+
+type Email struct {
+	Email string `json:"email" bson:"email" binding:"required"`
 }

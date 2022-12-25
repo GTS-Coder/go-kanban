@@ -223,3 +223,108 @@ func AddAttachments() gin.HandlerFunc {
 		defer c.JSON(http.StatusOK, gin.H{"data": ClientAddAttachments.Data, "message": "Add new attachments success"})
 	}
 }
+
+func RenameTask() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
+		ClientRenameCard := models.RenameCard{}
+		ClientGetBoard := models.DBResponse{}
+
+		if err := c.ShouldBindJSON(&ClientRenameCard); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error_json": err.Error()})
+			defer cancel()
+			return
+		}
+
+		update := bson.M{
+			"$set": bson.M{
+				"board.cards.$.name": ClientRenameCard.Name,
+			},
+		}
+
+		err := kanbanCollection.FindOneAndUpdate(context.Background(), bson.M{"board.cards.id": ClientRenameCard.ID}, update).Decode(&ClientGetBoard)
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+				"data":  ClientRenameCard,
+			})
+			defer cancel()
+			return
+		}
+
+		defer cancel()
+		defer c.JSON(http.StatusOK, gin.H{"data": ClientRenameCard, "message": "Add new attachments success"})
+	}
+}
+
+func ChangeDescriptionTask() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
+		ClientChangeDescription := models.ChangeDescriptionCard{}
+		ClientGetBoard := models.DBResponse{}
+
+		if err := c.ShouldBindJSON(&ClientChangeDescription); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error_json": err.Error()})
+			defer cancel()
+			return
+		}
+
+		update := bson.M{
+			"$set": bson.M{
+				"board.cards.$.description": ClientChangeDescription.NewDescription,
+			},
+		}
+
+		err := kanbanCollection.FindOneAndUpdate(context.Background(), bson.M{"board.cards.id": ClientChangeDescription.ID}, update).Decode(&ClientGetBoard)
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+				"data":  ClientChangeDescription,
+			})
+			defer cancel()
+			return
+		}
+
+		defer cancel()
+		defer c.JSON(http.StatusOK, gin.H{"data": ClientChangeDescription, "message": "Add new attachments success"})
+	}
+}
+
+func AddNewComment() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
+		ClientAddNewComment := models.AddNewComment{}
+		ClientGetBoard := models.DBResponse{}
+
+		if err := c.ShouldBindJSON(&ClientAddNewComment); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error_json": err.Error()})
+			defer cancel()
+			return
+		}
+
+		update := bson.M{
+			"$push": bson.M{
+				"board.cards.$.comments": ClientAddNewComment.NewComment,
+			},
+		}
+
+		err := kanbanCollection.FindOneAndUpdate(context.Background(), bson.M{"board.cards.id": ClientAddNewComment.CardID}, update).Decode(&ClientGetBoard)
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+				"data":  ClientAddNewComment,
+			})
+			defer cancel()
+			return
+		}
+
+		defer cancel()
+		defer c.JSON(http.StatusOK, gin.H{"data": ClientAddNewComment, "message": "Add new comment success"})
+	}
+}
